@@ -60,7 +60,7 @@ public class DataFileOperations {
         }
     }
 
-    public static Abonent mapToAbonent(String[] line) {
+    private static Abonent mapToAbonent(String[] line) {
         Abonent abonent = new Abonent();
         abonent.setAbonentNumber(Long.parseLong(line[0].trim()));
         abonent.setAbonentSurname(line[1].trim());
@@ -70,22 +70,5 @@ public class DataFileOperations {
         abonent.setAbonentTariffNumber(Integer.parseInt(line[5].trim()));
         abonent.setAbonentMinutes(Integer.parseInt(line[6].trim()));
         return abonent;
-    }
-
-    public static Abonent mapToAbonentWithoutId(String[] line) {
-        Abonent abonent = new Abonent();
-        abonent.setAbonentSurname(line[0].trim());
-        abonent.setAbonentFirstname(line[1].trim());
-        abonent.setAbonentSecondname(line[2].trim());
-        abonent.setAbonentBirth(java.sql.Date.valueOf(LocalDate.parse(line[3].trim())));
-        abonent.setAbonentTariffNumber(Integer.parseInt(line[4].trim()));
-        abonent.setAbonentMinutes(Integer.parseInt(line[5].trim()));
-        return abonent;
-    }
-
-    public static Tariff mapToTariffWithoutId(String line) {
-        Tariff tariff = new Tariff();
-        tariff.setTariffDescription(line);
-        return tariff;
     }
 }

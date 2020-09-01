@@ -1,29 +1,36 @@
-package com.sberbank.testapp;
+package com.sberbank.starter;
 
 import com.sberbank.generator.DataFileOperations;
-import com.sberbank.testapp.configuration.SpringConfiguration;
 import com.sberbank.testapp.dao.AbonentDao;
 import com.sberbank.testapp.dao.TariffDao;
 import com.sberbank.testapp.entity.Abonent;
 import com.sberbank.testapp.entity.Tariff;
 import com.sberbank.testapp.ui.CommandLinePrinter;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
+import com.sberbank.testapp.utils.Mapper;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.stereotype.Component;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.util.List;
 
-public class ApplicationRunnerClass {
+@Data
+@Component
+public class ApplicationStarter {
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private final AbonentDao abonentDao;
+    private final TariffDao tariffDao;
 
-    public static void main(String[] args) {
-        AnnotationConfigApplicationContext context =
-                new AnnotationConfigApplicationContext(SpringConfiguration.class);
-
-        AbonentDao abonentDao = context.getBean(AbonentDao.class);
-        TariffDao tariffDao = context.getBean(TariffDao.class);
-
+    public void start() {
         try {
-
             while (true) {
                 CommandLinePrinter.printOptionsMenu();
 
@@ -49,7 +56,7 @@ public class ApplicationRunnerClass {
                     break;
                     case "4": {
                         System.out.println("Data format : surname, firstname, secondname, birth, tariff, minutes");
-                        Abonent abonent = DataFileOperations.mapToAbonentWithoutId(br.readLine().split(","));
+                        Abonent abonent = Mapper.mapToAbonentWithoutId(br.readLine().split(","));
 
                         int id = abonentDao.save(abonent);
                         if (id == -1) {
@@ -61,10 +68,11 @@ public class ApplicationRunnerClass {
                     break;
                     case "5": {
                         System.out.println("Data format : description");
-                        Tariff tariff = DataFileOperations.mapToTariffWithoutId(br.readLine());
+                        Tariff tariff = Mapper.mapToTariffWithoutId(br.readLine());
                         int id = tariffDao.save(tariff);
                         System.out.println("Tariff added, id: " + id);
                     }
+                    break;
                     case "6": {
                         System.out.println("Enter directory:\n");
                         File path = new File(br.readLine());
@@ -80,9 +88,9 @@ public class ApplicationRunnerClass {
                         abonentDao.saveAll(abonents);
                         System.out.println("Abonents saved: " + abonents.size());
                     }
+                    break;
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
