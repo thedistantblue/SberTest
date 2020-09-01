@@ -2,10 +2,10 @@ package com.sberbank.testapp;
 
 import com.sberbank.generator.DataFileOperations;
 import com.sberbank.testapp.configuration.SpringConfiguration;
-import com.sberbank.testapp.constants.ColumnConstants;
 import com.sberbank.testapp.dao.AbonentDao;
 import com.sberbank.testapp.dao.TariffDao;
 import com.sberbank.testapp.entity.Abonent;
+import com.sberbank.testapp.entity.Tariff;
 import com.sberbank.testapp.ui.CommandLinePrinter;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -31,27 +31,27 @@ public class ApplicationRunnerClass {
                 switch (br.readLine()) {
                     case "exit": return;
                     case "1":  {
-                        SqlRowSet rowSet = abonentDao.findAll();
-                        CommandLinePrinter.printAbonentTableData(rowSet);
+                        List<Abonent> abonents = abonentDao.findAll();
+                        CommandLinePrinter.printAbonentTableData(abonents);
                     }
                     break;
                     case "2": {
-                        SqlRowSet rowSet = tariffDao.findAll();
+                        List<Tariff> rowSet = tariffDao.findAll();
                         CommandLinePrinter.printTariffTableData(rowSet);
+                    }
+                    break;
+                    case "3": {
+                        System.out.println("Enter id: ");
+                        String id = br.readLine();
+                        Abonent abonent = abonentDao.findById(id);
+                        System.out.println(abonent.toString());
                     }
                     break;
                     case "4": {
                         System.out.println("Data format : surname, firstname, secondname, birth, tariff, minutes");
-                        List<String> data = Arrays.asList(br.readLine().split(","));
-                        Map<String, Object> dataMap = new HashMap<>();
-                        dataMap.put(ColumnConstants.Abonent.SURNAME_COLUMN, data.get(0));
-                        dataMap.put(ColumnConstants.Abonent.FIRSTNAME_COLUMN, data.get(1));
-                        dataMap.put(ColumnConstants.Abonent.SECONDNAME_COLUMN, data.get(2));
-                        dataMap.put(ColumnConstants.Abonent.BIRTH_COLUMN, data.get(3));
-                        dataMap.put(ColumnConstants.Abonent.TARIFF_COLUMN, data.get(4));
-                        dataMap.put(ColumnConstants.Abonent.MINUTES_COLUMN, data.get(5));
+                        Abonent abonent = DataFileOperations.mapToAbonentWithoutId(br.readLine().split(","));
 
-                        int id = abonentDao.insertAbonent(dataMap);
+                        int id = abonentDao.save(abonent);
                         if (id == -1) {
                             System.out.println("Failed to add abonent, exception above");
                         } else {
@@ -60,6 +60,12 @@ public class ApplicationRunnerClass {
                     }
                     break;
                     case "5": {
+                        System.out.println("Data format : description");
+                        Tariff tariff = DataFileOperations.mapToTariffWithoutId(br.readLine());
+                        int id = tariffDao.save(tariff);
+                        System.out.println("Tariff added, id: " + id);
+                    }
+                    case "6": {
                         System.out.println("Enter directory:\n");
                         File path = new File(br.readLine());
                         String filePath = DataFileOperations.generate(path);

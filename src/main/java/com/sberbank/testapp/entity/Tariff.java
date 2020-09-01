@@ -1,22 +1,24 @@
 package com.sberbank.testapp.entity;
 
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.StringJoiner;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Tariff {
     private long tariffNumber;
     private String tariffDescription;
 
-    public long getTariffNumber() {
-        return tariffNumber;
+    @Override
+    public String toString() {
+        return new StringJoiner("|").add(String.valueOf(tariffNumber))
+                                            .add(tariffDescription)
+                                            .toString();
     }
 
-    public void setTariffNumber(long tariffNumber) {
-        this.tariffNumber = tariffNumber;
-    }
-
-    public String getTariffDescription() {
-        return tariffDescription;
-    }
-
-    public void setTariffDescription(String tariffDescription) {
-        this.tariffDescription = tariffDescription;
-    }
 }
